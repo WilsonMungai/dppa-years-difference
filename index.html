@@ -1,0 +1,42 @@
+<html>
+<head>
+<script 
+    src="https://thunkable.github.io/webviewer-extension/thunkableWebviewerExtension.js"
+    type="text/javascript"></script>
+</head>
+
+<script>
+  ThunkableWebviewerExtension.receiveMessage(function(message) {
+    // Parse the input message (expected to be JSON)
+    const input = JSON.parse(message);
+
+    // If the message contains a date
+    if (input.date) {
+      try {
+        // Parse the input date (assumed to be in 'YYYY-MM-DD' format)
+        const inputDate = new Date(input.date);
+
+        // Check if the date is valid
+        if (isNaN(inputDate)) {
+          throw new Error("Invalid date format. Use 'YYYY-MM-DD'.");
+        }
+
+        // Add 5 years to the input date
+        inputDate.setFullYear(inputDate.getFullYear() + 5);
+
+        // Format the date back to 'YYYY-MM-DD'
+        const fiveYearsLater = inputDate.toISOString().split("T")[0];
+
+        // Post the new date back to Thunkable
+        ThunkableWebviewerExtension.postMessage(fiveYearsLater);
+      } catch (error) {
+        // Post an error message back to Thunkable in case of invalid input
+        ThunkableWebviewerExtension.postMessage(`Error: ${error.message}`);
+      }
+    } else {
+      // Post an error if no date is provided
+      ThunkableWebviewerExtension.postMessage("Error: No date provided.");
+    }
+  });
+</script>
+</html>
